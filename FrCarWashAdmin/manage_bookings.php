@@ -65,24 +65,19 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
+     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="admin_dashboard.php">
+                            <a class="nav-link active" aria-current="page" href="admin_dashboard.php">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="manage_bookings.php">
-                                <i class="fas fa-calendar-check"></i> Manajemen Pemesanan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="manage_services.php">
-                                <i class="fas fa-cogs"></i> Manajemen Layanan
+                            <a class="nav-link" href="manage_bookings.php">
+                                <i class="fas fa-calendar-alt"></i> Manajemen Pemesanan
                             </a>
                         </li>
                         <li class="nav-item">
@@ -90,9 +85,14 @@
                                 <i class="fas fa-users"></i> Manajemen Pelanggan
                             </a>
                         </li>
-                         <li class="nav-item">
+                        <li class="nav-item">
+                            <a class="nav-link" href="manage_services.php">
+                                <i class="fas fa-car-wash"></i> Manajemen Layanan
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="view_logs.php">
-                                <i class="fas fa-history"></i> Lihat Log
+                                <i class="fas fa-clipboard-list"></i> Lihat Log Aktivitas
                             </a>
                         </li>
                     </ul>
