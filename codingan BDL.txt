@@ -1,0 +1,278 @@
+-- Tabel customers
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(15) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE
+);
+
+-- Tabel services
+CREATE TABLE services (
+    service_id INT PRIMARY KEY AUTO_INCREMENT,
+    service_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL
+);
+
+-- Tabel bookings
+CREATE TABLE bookings (
+    booking_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    service_id INT NOT NULL,
+    booking_date DATETIME NOT NULL,
+    status VARCHAR(20) DEFAULT 'Pending', -- e.g., 'Pending', 'Confirmed', 'Completed', 'Cancelled'
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+-- Tabel users untuk sistem login
+CREATE TABLE users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL, -- Simpan hash password, BUKAN password plainteks!
+    role VARCHAR(20) NOT NULL DEFAULT 'user', -- 'user' atau 'admin'
+    customer_id INT UNIQUE, -- Link ke tabel customers jika user adalah pelanggan
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+ FUNCTION CalculateTotalRevenueLastMonth
+DELIMITER //
+
+CREATE FUNCTION CalculateTotalRevenueLastMonth() RETURNS DECIMAL(10, 2)
+READS SQL DATA
+BEGIN
+    DECLARE total_revenue DECIMAL(10, 2);
+    SELECT SUM(s.price) INTO total_revenue
+    FROM bookings b
+    JOIN services s ON b.service_id = s.service_id
+    WHERE b.status = 'Completed'
+      AND b.booking_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+      AND b.booking_date < CURRENT_DATE(); -- Hanya hingga akhir bulan lalu atau hari ini bulan lalu
+
+    RETURN IFNULL(total_revenue, 0.00); -- Mengembalikan 0 jika tidak ada pendapatan
+END //
+
+DELIMITER ;
+
+ v_booking_details belum dibuat di database Anda, maka ini adalah penyebab error. Kode PHP Anda mencoba melakukan SELECT * FROM v_booking_details
+CREATE VIEW v_booking_details AS
+SELECT
+    b.booking_id,
+    c.first_name AS customer_name,
+    c.email AS customer_email,
+    c.phone_number AS customer_phone,
+    b.booking_date,
+    s.service_name,
+    s.price AS service_price,
+    b.status AS booking_status
+FROM
+    bookings b
+JOIN
+    customers c ON b.customer_id = c.customer_id
+JOIN
+    services s ON b.service_id = s.service_id;
+
+sp_add_new_booking
+Seperti yang disebutkan di komentar kode, pastikan Anda telah menjalankan SQL berikut untuk membuat stored procedure sp_add_new_booking
+DELIMITER //
+
+CREATE PROCEDURE sp_add_new_booking (
+    IN p_customer_id INT,
+    IN p_service_id INT,
+    IN p_booking_date DATETIME -- Parameter ini akan menerima gabungan tanggal dan waktu
+)
+BEGIN
+    INSERT INTO bookings (customer_id, service_id, booking_date, status)
+    VALUES (p_customer_id, p_service_id, p_booking_date, 'Pending');
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE OR REPLACE FUNCTION CalculateTotalRevenueLastMonth() RETURNS DECIMAL(10, 2)
+READS SQL DATA
+BEGIN
+    DECLARE total_revenue DECIMAL(10, 2);
+    SELECT SUM(s.price) INTO total_revenue
+    FROM bookings b
+    JOIN services s ON b.service_id = s.service_id
+    WHERE b.status = 'Completed'
+      AND b.booking_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+      AND b.booking_date < DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY); -- INI PERUBAHANNYA: Hingga akhir hari ini
+
+    RETURN IFNULL(total_revenue, 0.00);
+END //
+
+DELIMITER ;
+
+CREATE TABLE activity_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    log_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    log_type VARCHAR(50), -- e.g., 'INSERT', 'UPDATE', 'DELETE'
+    log_message TEXT,
+    table_name VARCHAR(100),
+    record_id INT NULL -- ID dari record yang diubah/dihapus (jika ada)
+);
+
+Trigger bookings
+DELIMITER //
+
+-- Trigger AFTER INSERT pada bookings
+CREATE TRIGGER after_booking_insert
+AFTER INSERT ON bookings
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('INSERT', CONCAT('New booking created for customer_id ', NEW.customer_id, ' (Booking ID: ', NEW.booking_id, ')'), 'bookings', NEW.booking_id);
+END//
+
+-- Trigger AFTER UPDATE pada bookings
+CREATE TRIGGER after_booking_update
+AFTER UPDATE ON bookings
+FOR EACH ROW
+BEGIN
+    -- Log jika ada perubahan status
+    IF OLD.status <> NEW.status THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Booking ID ', NEW.booking_id, ' status changed from ''', OLD.status, ''' to ''', NEW.status, ''''), 'bookings', NEW.booking_id);
+    END IF;
+
+    -- Log jika ada perubahan appointment_date atau time
+    IF OLD.appointment_date <> NEW.appointment_date OR OLD.appointment_time <> NEW.appointment_time THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Booking ID ', NEW.booking_id, ' appointment date/time updated from ', OLD.appointment_date, ' ', OLD.appointment_time, ' to ', NEW.appointment_date, ' ', NEW.appointment_time), 'bookings', NEW.booking_id);
+    END IF;
+
+    -- Anda bisa tambahkan lebih banyak kondisi IF untuk melacak perubahan kolom lain yang penting
+END//
+
+-- Trigger AFTER DELETE pada bookings
+CREATE TRIGGER after_booking_delete
+AFTER DELETE ON bookings
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('DELETE', CONCAT('Booking ID ', OLD.booking_id, ' for customer_id ', OLD.customer_id, ' was deleted.'), 'bookings', OLD.booking_id);
+END//
+
+DELIMITER ;
+
+Trigger Customer
+DELIMITER //
+
+-- Trigger AFTER INSERT pada customers
+CREATE TRIGGER after_customer_insert
+AFTER INSERT ON customers
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('INSERT', CONCAT('New customer added: ', NEW.first_name, ' ', NEW.last_name, ' (ID: ', NEW.customer_id, ')'), 'customers', NEW.customer_id);
+END//
+
+-- Trigger AFTER UPDATE pada customers
+CREATE TRIGGER after_customer_update
+AFTER UPDATE ON customers
+FOR EACH ROW
+BEGIN
+    IF OLD.first_name <> NEW.first_name OR OLD.last_name <> NEW.last_name OR OLD.email <> NEW.email THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Customer ID ', NEW.customer_id, ' updated. Old name: ', OLD.first_name, ' ', OLD.last_name, ', New name: ', NEW.first_name, ' ', NEW.last_name), 'customers', NEW.customer_id);
+    END IF;
+END//
+
+-- Trigger AFTER DELETE pada customers
+CREATE TRIGGER after_customer_delete
+AFTER DELETE ON customers
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('DELETE', CONCAT('Customer deleted: ', OLD.first_name, ' ', OLD.last_name, ' (ID: ', OLD.customer_id, ')'), 'customers', OLD.customer_id);
+END//
+
+DELIMITER ;
+
+-- Trigger untuk tabel bookings
+-- Hapus trigger jika sudah ada untuk menghindari error "already exists"
+DROP TRIGGER IF EXISTS after_booking_insert;
+DROP TRIGGER IF EXISTS after_booking_update;
+DROP TRIGGER IF EXISTS after_booking_delete;
+
+DELIMITER //
+
+-- Trigger AFTER INSERT pada bookings
+-- Mencatat setiap kali ada pemesanan baru ditambahkan
+CREATE TRIGGER after_booking_insert
+AFTER INSERT ON bookings
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('INSERT', CONCAT('New booking created for customer_id ', NEW.customer_id, ' (Booking ID: ', NEW.booking_id, ', Date: ', NEW.booking_date, ')'), 'bookings', NEW.booking_id);
+END//
+
+-- Trigger AFTER UPDATE pada bookings
+-- Mencatat jika ada perubahan status atau tanggal booking
+CREATE TRIGGER after_booking_update
+AFTER UPDATE ON bookings
+FOR EACH ROW
+BEGIN
+    -- Periksa jika status booking berubah
+    IF OLD.status <> NEW.status THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Booking ID ', NEW.booking_id, ' status changed from ''', OLD.status, ''' to ''', NEW.status, ''''), 'bookings', NEW.booking_id);
+    END IF;
+
+    -- Periksa jika tanggal booking berubah
+    IF OLD.booking_date <> NEW.booking_date THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Booking ID ', NEW.booking_id, ' booking date updated from ', OLD.booking_date, ' to ', NEW.booking_date), 'bookings', NEW.booking_id);
+    END IF;
+END//
+
+-- Trigger AFTER DELETE pada bookings
+-- Mencatat setiap kali ada pemesanan dihapus
+CREATE TRIGGER after_booking_delete
+AFTER DELETE ON bookings
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('DELETE', CONCAT('Booking ID ', OLD.booking_id, ' for customer_id ', OLD.customer_id, ' (Date: ', OLD.booking_date, ') was deleted.'), 'bookings', OLD.booking_id);
+END//
+
+DELIMITER ;
+
+-- Trigger untuk tabel customers
+-- Hapus trigger jika sudah ada untuk menghindari error "already exists"
+DROP TRIGGER IF EXISTS after_customer_insert;
+DROP TRIGGER IF EXISTS after_customer_update;
+DROP TRIGGER IF EXISTS after_customer_delete;
+
+DELIMITER //
+
+CREATE TRIGGER after_customer_insert
+AFTER INSERT ON customers
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('INSERT', CONCAT('New customer added: ', NEW.first_name, ' ', NEW.last_name, ' (ID: ', NEW.customer_id, ')'), 'customers', NEW.customer_id);
+END//
+
+CREATE TRIGGER after_customer_update
+AFTER UPDATE ON customers
+FOR EACH ROW
+BEGIN
+    IF OLD.first_name <> NEW.first_name OR OLD.last_name <> NEW.last_name OR OLD.email <> NEW.email THEN
+        INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+        VALUES ('UPDATE', CONCAT('Customer ID ', NEW.customer_id, ' updated. Old: ', OLD.first_name, ' ', OLD.last_name, ' (', OLD.email, '), New: ', NEW.first_name, ' ', NEW.last_name, ' (', NEW.email, ')'), 'customers', NEW.customer_id);
+    END IF;
+END//
+
+CREATE TRIGGER after_customer_delete
+AFTER DELETE ON customers
+FOR EACH ROW
+BEGIN
+    INSERT INTO activity_logs (log_type, log_message, table_name, record_id)
+    VALUES ('DELETE', CONCAT('Customer deleted: ', OLD.first_name, ' ', OLD.last_name, ' (ID: ', OLD.customer_id, ')'), 'customers', OLD.customer_id);
+END//
+
+DELIMITER ;

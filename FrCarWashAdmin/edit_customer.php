@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRCarWash Admin - Edit Pelanggan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background-color: #007bff !important; }
+        .navbar-brand, .nav-link { color: #fff !important; }
+        .sidebar { background-color: #343a40; color: #fff; height: 100vh; padding-top: 20px; }
+        .sidebar .nav-link { color: #fff; padding: 10px 15px; display: block; }
+        .sidebar .nav-link:hover { background-color: #007bff; }
+        .content { padding: 20px; }
+        .logo-img { height: 40px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="logofr.png" alt="FRCarWash Logo" class="logo-img">
+                FRCarWash Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="FRCarWash/index.html">Kembali ke Situs</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin_dashboard.php">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="manage_bookings.php">
+                                <i class="fas fa-calendar-check"></i> Manajemen Pemesanan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="manage_services.php">
+                                <i class="fas fa-cogs"></i> Manajemen Layanan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="manage_customers.php">
+                                <i class="fas fa-users"></i> Manajemen Pelanggan
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="view_logs.php">
+                                <i class="fas fa-history"></i> Lihat Log
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+                <h2 class="mb-4">Edit Pelanggan</h2>
+
+                <?php
+                include 'db_config.php';
+
+                $customer_id = $_GET['id'] ?? 0;
+                $customer_data = null;
+                $first_name_error = '';
+                $phone_number_error = '';
+                $email_error = '';
+                $edit_success = false;
+
+                // Ambil data pelanggan yang akan diedit
+                if ($customer_id > 0) {
+                    $stmt = $conn->prepare("SELECT customer_id, first_name, last_name, phone_number, email FROM customers WHERE customer_id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param("i", $customer_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        if ($result->num_rows > 0) {
+                            $customer_data = $result->fetch_assoc();
+                        } else {
+                            echo '<div class="alert alert-danger" role="alert">Pelanggan tidak ditemukan.</div>';
+                            $customer_id = 0; // Set to 0 to prevent form display
+                        }
+                        $stmt->close();
+                    } else {
+                        echo '<div class="alert alert-danger" role="alert">Error preparing statement: ' . htmlspecialchars($conn->error) . '</div>';
+                    }
+                }
+
+                // Proses form submission (UPDATE)
+                if ($_SERVER["REQUEST_METHOD"] == "POST" && $customer_id > 0) {
+                    $first_name = $_POST['first_name'] ?? '';
+                    $last_name = $_POST['last_name'] ?? '';
+                    $phone_number = $_POST['phone_number'] ?? '';
+                    $email = $_POST['email'] ?? '';
+
+                    // Validasi
+                    if (empty($first_name)) {
+                        $first_name_error = "Nama depan wajib diisi.";
+                    }
+                    if (empty($phone_number)) {
+                        $phone_number_error = "Nomor telepon wajib diisi.";
+                    }
+                    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $email_error = "Format email tidak valid.";
+                    }
+
+                    if (empty($first_name_error) && empty($phone_number_error) && empty($email_error)) {
+                        $stmt = $conn->prepare("UPDATE customers SET first_name = ?, last_name = ?, phone_number = ?, email = ? WHERE customer_id = ?");
+                        if ($stmt) {
+                            $stmt->bind_param("ssssi", $first_name, $last_name, $phone_number, $email, $customer_id);
+
+                            if ($stmt->execute()) {
+                                $edit_success = true;
+                                // Update data di $customer_data agar form menampilkan data terbaru
+                                $customer_data['first_name'] = $first_name;
+                                $customer_data['last_name'] = $last_name;
+                                $customer_data['phone_number'] = $phone_number;
+                                $customer_data['email'] = $email;
+                            } else {
+                                echo '<div class="alert alert-danger" role="alert">Error: ' . htmlspecialchars($stmt->error) . '</div>';
+                            }
+                            $stmt->close();
+                        } else {
+                            echo '<div class="alert alert-danger" role="alert">Error preparing statement: ' . htmlspecialchars($conn->error) . '</div>';
+                        }
+                    }
+                }
+                ?>
+
+                <?php if ($edit_success): ?>
+                    <div class="alert alert-success" role="alert">
+                        Data pelanggan berhasil diperbarui! <a href="manage_customers.php" class="alert-link">Kembali ke Manajemen Pelanggan</a>.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($customer_id > 0 && $customer_data): ?>
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . htmlspecialchars($customer_id); ?>">
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">Nama Depan:</label>
+                        <input type="text" class="form-control <?php echo (!empty($first_name_error)) ? 'is-invalid' : ''; ?>" id="first_name" name="first_name" required value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : htmlspecialchars($customer_data['first_name']); ?>">
+                        <div class="invalid-feedback">
+                            <?php echo $first_name_error; ?>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">Nama Belakang (Opsional):</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : htmlspecialchars($customer_data['last_name']); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Nomor Telepon:</label>
+                        <input type="text" class="form-control <?php echo (!empty($phone_number_error)) ? 'is-invalid' : ''; ?>" id="phone_number" name="phone_number" required value="<?php echo isset($_POST['phone_number']) ? htmlspecialchars($_POST['phone_number']) : htmlspecialchars($customer_data['phone_number']); ?>">
+                        <div class="invalid-feedback">
+                            <?php echo $phone_number_error; ?>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email (Opsional):</label>
+                        <input type="email" class="form-control <?php echo (!empty($email_error)) ? 'is-invalid' : ''; ?>" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : htmlspecialchars($customer_data['email']); ?>">
+                        <div class="invalid-feedback">
+                            <?php echo $email_error; ?>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                    <a href="manage_customers.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
+                </form>
+                <?php endif; ?>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<?php
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
+?>
