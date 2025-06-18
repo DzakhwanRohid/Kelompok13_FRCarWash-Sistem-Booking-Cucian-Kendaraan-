@@ -276,3 +276,41 @@ BEGIN
 END//
 
 DELIMITER ;
+
+DELIMITER $$
+
+-- Drop the old function if it exists, to recreate it with correct logic
+DROP FUNCTION IF EXISTS `CalculateTotalRevenueLastMonth`$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `CalculateTotalRevenueLastMonth` () RETURNS DECIMAL(10,2) READS SQL DATA BEGIN
+    DECLARE total_revenue DECIMAL(10,2);
+    
+    SELECT COALESCE(SUM(s.price), 0.00) INTO total_revenue
+    FROM bookings b
+    JOIN services s ON b.service_id = s.service_id
+    WHERE b.status = 'Completed'
+      -- Start of last month
+      AND b.booking_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) - INTERVAL DAYOFMONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) - 1 DAY
+      -- End of last month (exclusive, so it goes up to the very start of the current month)
+      AND b.booking_date < DATE_SUB(CURDATE(), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY); 
+    RETURN total_revenue;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `CalculateTotalRevenueCurrentMonth` () RETURNS DECIMAL(10,2) READS SQL DATA BEGIN
+    DECLARE total_revenue DECIMAL(10,2);
+    
+    SELECT COALESCE(SUM(s.price), 0.00) INTO total_revenue
+    FROM bookings b
+    JOIN services s ON b.service_id = s.service_id
+    WHERE b.status = 'Completed'
+      -- Start of current month
+      AND b.booking_date >= DATE_SUB(CURDATE(), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY)
+      -- End of current month (exclusive, so it goes up to the very start of the next month)
+      AND b.booking_date < DATE_ADD(DATE_SUB(CURDATE(), INTERVAL DAYOFMONTH(CURDATE()) - 1 DAY), INTERVAL 1 MONTH); 
+    RETURN total_revenue;
+END$$
+
+DELIMITER ;

@@ -3,73 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FRCarWash Admin - Edit Layanan</title>
+    <title>FRCarWash Admin - Manajemen Layanan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body { background-color: #f8f9fa; }
-        .navbar { background-color: #007bff !important; }
-        .navbar-brand, .nav-link { color: #fff !important; }
-        .sidebar { background-color: #343a40; color: #fff; height: 100vh; padding-top: 20px; }
-        .sidebar .nav-link { color: #fff; padding: 10px 15px; display: block; }
-        .sidebar .nav-link:hover { background-color: #007bff; }
-        .content { padding: 20px; }
-        .logo-img { height: 40px; margin-right: 10px; }
-    </style>
-</head>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="logofr.png" alt="FRCarWash Logo" class="logo-img">
-                FRCarWash Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarContent" aria-controls="sidebarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="FRCarWash/index.html">Kembali ke Situs</a>
-                    </li>
-                </ul>
+            
+            <div class="ms-auto d-flex align-items-center">
+                <div class="dropdown user-profile-dropdown">
+                    <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                        <li><h6 class="dropdown-header">Admin FRCarWash</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">
+                            <i class="fas fa-user-circle me-2"></i> Profil Saya
+                        </a></li>
+                        <li><a class="dropdown-item" href="FRCarWash/index.html">
+                            <i class="fas fa-home me-2"></i> Kembali ke Situs
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">
+                            <i class="fas fa-sign-out-alt me-2"></i> Log Out
+                        </a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-                <div class="position-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="admin_dashboard.php">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="manage_bookings.php">
-                                <i class="fas fa-calendar-alt"></i> Manajemen Pemesanan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="manage_customers.php">
-                                <i class="fas fa-users"></i> Manajemen Pelanggan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="manage_services.php">
-                                <i class="fas fa-car-wash"></i> Manajemen Layanan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="view_logs.php">
-                                <i class="fas fa-clipboard-list"></i> Lihat Log Aktivitas
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+    <div class="sidebar-wrapper collapse d-lg-block" id="sidebarContent"> 
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="logofr.png" alt="FRCarWash Logo" class="brand-logo">
+                <span class="brand-text">FRCarWash</span>
+            </div>
+            
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="sidebar-heading">NAVIGATION</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_dashboard.php">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="sidebar-heading">Menu Manajemen</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manage_bookings.php">
+                            <i class="fas fa-calendar-alt"></i> Manajemen Pemesanan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manage_customers.php">
+                            <i class="fas fa-users"></i> Manajemen Pelanggan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="manage_services.php">
+                            <i class="fas fa-users-cog"></i> Manajemen Layanan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="view_logs.php">
+                            <i class="fas fa-clipboard-list"></i> Lihat Log Aktivitas
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="sidebar-wrapper collapse d-lg-block" id="sidebarContent"> 
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="logofr.png" alt="FRCarWash Logo" class="brand-logo">
+                <span class="brand-text">FRCarWash</span>
+            </div>
+            
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="sidebar-heading">NAVIGATION</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin_dashboard.php">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="sidebar-heading">Menu Manajemen</li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="manage_bookings.php">
+                            <i class="fas fa-calendar-alt"></i> Manajemen Pemesanan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manage_customers.php">
+                            <i class="fas fa-users"></i> Manajemen Pelanggan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manage_services.php">
+                            <i class="fas fa-users-cog"></i> Manajemen Layanan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="view_logs.php">
+                            <i class="fas fa-clipboard-list"></i> Lihat Log Aktivitas
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
                 <h2 class="mb-4">Edit Layanan</h2>
 

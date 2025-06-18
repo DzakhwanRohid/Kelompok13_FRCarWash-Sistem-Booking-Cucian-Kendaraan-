@@ -1,0 +1,323 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+    color: #343a40;
+    overflow-x: hidden;
+}
+
+/* --- Navbar (Headbar) Styling - AGAK TRANSPARAN --- */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.7) !important; /* Putih agak transparan*/
+    backdrop-filter: blur(5px); /* Efek blur di belakang*/
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Bayangan lebih halus*/
+    padding: 8px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1020; /* Lebih rendah dari sidebar agar ditimpa*/
+    transition: all 0.3s ease;
+    height: 60px; /* Tinggi tetap*/
+    display: flex;
+    align-items: center;
+}
+/* Hapus style untuk navbar-brand di sini karena brand sudah di sidebar */
+.navbar-brand {
+    display: none; /* Sembunyikan brand dari navbar */
+}
+
+/* Hamburger button styling */
+.navbar-toggler {
+    border: none;
+    outline: none;
+    padding: 0;
+    font-size: 1.5rem;
+    color: #3f51b5;
+    transition: transform 0.2s ease;
+    margin-right: 15px; /* Tambahkan sedikit margin kanan agar tidak terlalu dekat dengan brand */
+}
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2863, 81, 181, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.user-profile-dropdown img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.user-profile-dropdown img:hover {
+    transform: scale(1.05);
+    border-color: #3f51b5;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+.user-profile-dropdown .dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+    margin-top: 10px;
+    min-width: 180px;
+}
+.user-profile-dropdown .dropdown-item {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    color: #555;
+}
+.user-profile-dropdown .dropdown-item:hover {
+    background-color: #f5f5f5;
+    color: #3f51b5;
+}
+.dropdown-header {
+    color: #888;
+    font-weight: 500;
+    padding: 8px 15px;
+    font-size: 0.85em;
+}
+/* Hapus search bar dan lonceng dari navbar */
+.navbar .search-bar, .navbar .notification-bell {
+    display: none;
+}
+
+/* --- Sidebar Styling - Mirip Desta Able --- */
+.sidebar-wrapper {
+    position: fixed;
+    top: 0; /* Mulai dari paling atas*/
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 1030; /* Lebih tinggi dari navbar agar menimpa*/
+    background-color: #212121; /* Warna gelap Desta Able */
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    padding-top: 0; /* Hapus padding top */
+}
+
+.sidebar-header {
+    background-color: #212121; /* Warna sidebar header */
+    padding: 20px 25px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08); /* Separator */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Posisikan ke kiri */
+    flex-direction: row;
+    padding-left: 20px;
+    height: 60px; /* Tinggi sama dengan headbar*/
+    box-sizing: border-box; /* Sertakan padding dalam tinggi */
+}
+.sidebar-header .brand-logo {
+    height: 35px; /* Ukuran logo */
+    margin-right: 10px;
+}
+.sidebar-header .brand-text {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+/* Specific section for profile info below the brand in sidebar */
+.sidebar-profile-section {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 10px;
+}
+.sidebar-profile-section img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+.sidebar-profile-section .profile-info h5 {
+    color: #eceff1;
+    margin-bottom: 2px;
+    font-weight: 500;
+    font-size: 1.1em;
+}
+.sidebar-profile-section .profile-info span {
+    font-size: 0.85em;
+    color: #b0bec5;
+}
+
+.sidebar .sidebar-heading {
+    color: #90a4ae;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px 25px 5px;
+    letter-spacing: 0.8px;
+}
+
+.sidebar .nav-item {
+    margin-bottom: 2px;
+}
+.sidebar .nav-link {
+    color: #cfd8dc;
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    font-weight: 400;
+    font-size: 0.95em;
+}
+.sidebar .nav-link i {
+    margin-right: 15px;
+    font-size: 1.1em;
+    color: #90a4ae;
+}
+.sidebar .nav-link:hover {
+    background-color: rgba(255,255,255,0.05);
+    border-left-color: #3f51b5;
+    color: #fff;
+    transform: translateX(3px);
+}
+.sidebar .nav-link:hover i {
+    color: #3f51b5;
+}
+.sidebar .nav-link.active {
+    background-color:  #3f51b5!important;
+    border-left-color: #ffffff;
+    color: #fff !important;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.sidebar .nav-link.active i {
+    color: #fff !important;
+}
+
+/* --- Content Area Styling --- */
+.content {
+    margin-left: 260px; /* Sesuaikan dengan lebar sidebar */
+    padding: 25px;
+    padding-top: 85px; /* Memberi ruang di atas untuk navbar */
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    transition: margin-left 0.3s ease;
+}
+.content .breadcrumb {
+    background-color: transparent;
+    padding-left: 0;
+    margin-bottom: 25px;
+    font-size: 0.9em;
+    color: #666;
+}
+.content .breadcrumb-item a {
+    color: #3f51b5;
+    text-decoration: none;
+}
+.content .breadcrumb-item.active {
+    color: #999;
+}
+.content h1 {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+.content h3 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+/* Card Styling (Disesuaikan untuk tampilan baru) */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: none;
+    background-color: #fff; /* Pastikan bagian utama card berwarna putih */
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Sembunyikan card-header lama karena kita pakai struktur baru */
+.card-header {
+    display: none;
+}
+
+/* Gaya untuk angka besar di dalam card-body */
+.card-value {
+    font-size: 2.5rem; /* Ukuran font lebih besar untuk angka utama */
+    font-weight: 700;
+    color: #343a40; /* Warna gelap untuk angka */
+    margin-bottom: 5px; /* Jarak antara angka dan label */
+}
+
+/* Gaya untuk label di bawah angka */
+.card-label {
+    font-size: 0.95rem;
+    color: #6c757d; /* Warna teks yang lebih muted untuk label */
+    margin-bottom: 0;
+}
+
+/* Gaya untuk ikon utama di pojok kanan atas card-body */
+.card-main-icon {
+    font-size: 2.8rem; /* Ikon besar */
+    color: rgba(0, 0, 0, 0.1); /* Warna ikon lebih samar */
+    align-self: flex-start; /* Posisikan ikon di bagian atas */
+}
+
+/* Gaya untuk bilah bawah berwarna (card-footer baru) */
+.card-footer.card-bottom-bar {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(0,0,0,0.05); /* Sedikit garis pemisah */
+    font-size: 0.85em;
+    display: flex;
+    justify-content: space-between; /* Untuk meratakan teks dan ikon panah */
+    align-items: center;
+    border-bottom-left-radius: 10px; /* Ikuti radius card */
+    border-bottom-right-radius: 10px; /* Ikuti radius card */
+    color: #fff; /* Default teks putih */
+}
+
+/* Sesuaikan warna teks untuk bilah bawah jika latar belakangnya terang (misal warning) */
+.card-footer.card-bottom-bar.bg-warning {
+    color: #333 !important; /* Teks gelap untuk latar kuning */
+}
+
+/* Responsive adjustments for sidebar toggle */
+@media (max-width: 768px) {
+    .sidebar-wrapper {
+        left: -260px; /* Hide sidebar off-screen */
+    }
+    .sidebar-wrapper.show {
+        left: 0; /* Show sidebar */
+    }
+    .content {
+        margin-left: 0;
+    }
+    .navbar-toggler {
+        display: block !important;
+        margin-right: 15px; /* Space between toggler and brand */
+    }
+    /* .navbar-brand {
+        margin-left: 0;
+    } */
+}
+@media (min-width: 769px) {
+    .sidebar-wrapper {
+        left: 0 !important; /* Ensure sidebar is visible on desktop */
+    }
+    .navbar-toggler {
+        display: none !important; /* Hide hamburger on desktop */
+    }
+}
