@@ -121,7 +121,6 @@
                 $row = $result_total_customers->fetch_assoc();
                 $total_customers = $row['total_customers'];
             }
-
             // Total Layanan
             $sql_total_services = "SELECT COUNT(*) AS total_services FROM services";
             $result_total_services = $conn->query($sql_total_services);
@@ -130,7 +129,6 @@
                 $row = $result_total_services->fetch_assoc();
                 $total_services = $row['total_services'];
             }
-
             // Total Pemesanan
             $sql_total_bookings = "SELECT COUNT(*) AS total_bookings FROM bookings";
             $result_total_bookings = $conn->query($sql_total_bookings);
@@ -141,27 +139,22 @@
             }
 
             // --- Aggregasi SUM ---
-
             // Total Pendapatan Bulan Lalu (menggunakan Function database)
             $total_revenue_last_month = 0.00;
             $sql_revenue_last_month_function = "SELECT CalculateTotalRevenueLastMonth() AS total_revenue";
             $result_revenue_last_month_function = $conn->query($sql_revenue_last_month_function);
-
             if ($result_revenue_last_month_function && $result_revenue_last_month_function->num_rows > 0) {
                 $row_revenue_last_month_function = $result_revenue_last_month_function->fetch_assoc();
                 $total_revenue_last_month = $row_revenue_last_month_function['total_revenue'];
             }
-
             // Total Pendapatan Bulan Ini (menggunakan Function database baru)
             $total_revenue_current_month = 0.00;
             $sql_revenue_current_month_function = "SELECT CalculateTotalRevenueCurrentMonth() AS total_revenue";
             $result_revenue_current_month_function = $conn->query($sql_revenue_current_month_function);
-
             if ($result_revenue_current_month_function && $result_revenue_current_month_function->num_rows > 0) {
                 $row_revenue_current_month_function = $result_revenue_current_month_function->fetch_assoc();
                 $total_revenue_current_month = $row_revenue_current_month_function['total_revenue'];
             }
-
             // Total Pendapatan Keseluruhan (dari semua booking yang selesai)
             $sql_total_overall_revenue = "SELECT COALESCE(SUM(s.price), 0.00) AS overall_revenue 
                                           FROM bookings b JOIN services s ON b.service_id = s.service_id 
@@ -172,7 +165,6 @@
                 $row = $result_total_overall_revenue->fetch_assoc();
                 $total_overall_revenue = $row['overall_revenue'];
             }
-
             // Total Harga Semua Layanan (total nilai inventori layanan, bukan pendapatan)
             $sql_total_service_value = "SELECT COALESCE(SUM(price), 0.00) AS total_value FROM services";
             $result_total_service_value = $conn->query($sql_total_service_value);
@@ -183,7 +175,6 @@
             }
 
             // --- Aggregasi AVG ---
-
             // Rata-rata Harga Layanan
             $sql_avg_service_price = "SELECT COALESCE(AVG(price), 0.00) AS avg_price FROM services";
             $result_avg_service_price = $conn->query($sql_avg_service_price);
@@ -192,7 +183,6 @@
                 $avg_service_price_row = $result_avg_service_price->fetch_assoc();
                 $avg_service_price = $avg_service_price_row['avg_price'];
             }
-
             // Rata-rata Pemesanan per Pelanggan (Estimasi)
             $sql_avg_bookings_per_customer = "SELECT COALESCE(COUNT(b.booking_id) / COUNT(DISTINCT c.customer_id), 0) AS avg_per_customer 
                                               FROM bookings b JOIN customers c ON b.customer_id = c.customer_id";
@@ -202,9 +192,7 @@
                 $row = $result_avg_bookings_per_customer->fetch_assoc();
                 $avg_bookings_per_customer = $row['avg_per_customer'];
             }
-
             // --- Aggregasi MIN ---
-
             // Harga Layanan Terendah
             $sql_min_service_price = "SELECT COALESCE(MIN(price), 0.00) AS min_price FROM services";
             $result_min_service_price = $conn->query($sql_min_service_price);
@@ -213,7 +201,6 @@
                 $row = $result_min_service_price->fetch_assoc();
                 $min_service_price = $row['min_price'];
             }
-
             // Harga Pemesanan Terendah (dari booking yang selesai)
             $sql_min_booking_price = "SELECT COALESCE(MIN(s.price), 0.00) AS min_booking_price 
                                       FROM bookings b JOIN services s ON b.service_id = s.service_id 
@@ -224,9 +211,7 @@
                 $row = $result_min_booking_price->fetch_assoc();
                 $min_booking_price = $row['min_booking_price'];
             }
-
             // --- Aggregasi MAX ---
-
             // Harga Layanan Tertinggi
             $sql_max_service_price = "SELECT COALESCE(MAX(price), 0.00) AS max_price FROM services";
             $result_max_service_price = $conn->query($sql_max_service_price);
@@ -235,7 +220,6 @@
                 $row = $result_max_service_price->fetch_assoc();
                 $max_service_price = $row['max_price'];
             }
-
             // Harga Pemesanan Tertinggi (dari booking yang selesai)
             $sql_max_booking_price = "SELECT COALESCE(MAX(s.price), 0.00) AS max_booking_price 
                                       FROM bookings b JOIN services s ON b.service_id = s.service_id 
@@ -283,7 +267,6 @@
                     </div>
                 </div>
             </div>
-
             <h3 class="mt-4 mb-3">Ringkasan Umum</h3>
             <div class="row">
                 <div class="col-md-3 mb-4">
@@ -302,7 +285,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -319,7 +301,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -337,7 +318,6 @@
                     </div>
                 </div>
             </div>
-
             <h3 class="mt-4 mb-3">Statistik Nilai</h3>
             <div class="row">
                 <div class="col-md-3 mb-4">
@@ -356,7 +336,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -374,7 +353,6 @@
                     </div>
                 </div>
             </div>
-
             <h3 class="mt-4 mb-3">Rata-rata</h3>
             <div class="row">
                 <div class="col-md-3 mb-4">
@@ -393,7 +371,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -411,7 +388,6 @@
                     </div>
                 </div>
             </div>
-
             <h3 class="mt-4 mb-3">Nilai Min & Max</h3>
             <div class="row">
                 <div class="col-md-3 mb-4">
@@ -430,7 +406,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -447,7 +422,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-3 mb-4">
                     <div class="card dashboard-card">
                         <div class="card-body">
@@ -482,7 +456,6 @@
                     </div>
                 </div>
             </div>
-
         </div> <?php
         // Koneksi ke database ditutup di akhir script untuk memastikan semua operasi selesai
         if (isset($conn) && $conn instanceof mysqli) {
@@ -490,7 +463,6 @@
         }
         ?>
     </main>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

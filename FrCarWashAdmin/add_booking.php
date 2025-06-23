@@ -13,7 +13,6 @@
             <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarContent" aria-controls="sidebarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="ms-auto d-flex align-items-center">
                 <div class="dropdown user-profile-dropdown">
                     <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -37,14 +36,12 @@
             </div>
         </div>
     </nav>
-
     <div class="sidebar-wrapper collapse d-lg-block" id="sidebarContent"> 
         <nav id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <img src="logofr.png" alt="FRCarWash Logo" class="brand-logo">
                 <span class="brand-text">FRCarWash</span>
             </div>
-            
             <div class="position-sticky">
                 <ul class="nav flex-column">
                     <li class="sidebar-heading">NAVIGATION</li>
@@ -78,13 +75,10 @@
             </div>
         </nav>
     </div>
-
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
                 <h2 class="mb-4">Tambah Pemesanan Baru</h2>
-
                 <?php
                 include 'db_config.php';
-
                 $customer_error = '';
                 $service_error = '';
                 $new_customer_name_error = '';
@@ -101,7 +95,6 @@
                         $customers[] = $row;
                     }
                 }
-
                 // Mengambil daftar layanan untuk dropdown
                 $services_query = "SELECT service_id, service_name, price FROM services ORDER BY service_name ASC";
                 $services_result = $conn->query($services_query);
@@ -111,7 +104,6 @@
                         $services[] = $row;
                     }
                 }
-
                 // Proses form submission
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $customer_type = $_POST['customer_type'] ?? ''; // 'existing' atau 'new'
@@ -133,16 +125,13 @@
                         $new_last_name = $_POST['new_last_name'] ?? '';
                         $new_email = $_POST['new_email'] ?? '';
                         $new_phone = $_POST['new_phone'] ?? '';
-
                         // Validasi untuk pelanggan baru
                         if (empty($new_first_name)) {
                             $new_customer_name_error = "Nama depan pelanggan baru wajib diisi.";
                         }
                         // Anda bisa tambahkan validasi untuk email dan telepon jika diperlukan
-                        // if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) { $new_customer_email_error = "Format email tidak valid."; }
-                        // if (empty($new_phone)) { $new_customer_phone_error = "Nomor telepon pelanggan baru wajib diisi."; }
-
-
+                        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) { $new_customer_email_error = "Format email tidak valid."; }
+                        if (empty($new_phone)) { $new_customer_phone_error = "Nomor telepon pelanggan baru wajib diisi."; }
                         if (empty($new_customer_name_error) && empty($new_customer_email_error) && empty($new_customer_phone_error)) {
                             // Insert pelanggan baru
                             $stmt_insert_customer = $conn->prepare("INSERT INTO customers (first_name, last_name, phone_number, email) VALUES (?, ?, ?, ?)");
@@ -161,14 +150,12 @@
                     } else {
                         $customer_error = "Pilih jenis pelanggan (terdaftar/baru) adalah wajib.";
                     }
-
                     // Lanjutkan jika sudah ada customer_id (baik dari existing atau newly created) dan tidak ada error lainnya
                     if (!empty($customer_id) && empty($service_error) && empty($customer_error)) {
                         // Memanggil stored procedure sp_add_new_booking
                         $stmt = $conn->prepare("CALL sp_add_new_booking(?, ?, ?)");
                         if ($stmt) {
                             $stmt->bind_param("iis", $customer_id, $service_id, $booking_date_time);
-
                             if ($stmt->execute()) {
                                 $booking_success = true;
                                 $_POST = []; // Clear all POST data to reset form
@@ -180,12 +167,9 @@
                              echo '<div class="alert alert-danger" role="alert">Error preparing booking statement: ' . htmlspecialchars($conn->error) . '</div>';
                         }
                     } else {
-                        // Jika ada error, tampilkan di bawah formulir.
-                        // Error sudah diatur di masing-masing variabel: $customer_error, $service_error, $new_customer_name_error, dll.
                     }
                 }
                 ?>
-
                 <?php if ($booking_success): ?>
                     <div class="alert alert-success" role="alert">
                         Pemesanan baru berhasil ditambahkan! <a href="admin_dashboard.php" class="alert-link">Lihat daftar pemesanan</a>.
@@ -207,7 +191,6 @@
                             <div class="invalid-feedback d-block"><?php echo $customer_error; ?></div>
                         <?php endif; ?>
                     </div>
-
                     <div id="existing_customer_fields" class="mb-3">
                         <label for="customer_id" class="form-label">Pilih Pelanggan Terdaftar:</label>
                         <select class="form-select <?php echo (!empty($customer_error)) ? 'is-invalid' : ''; ?>" id="customer_id" name="customer_id">
@@ -224,7 +207,6 @@
                         </div>
                         <small class="form-text text-muted">Anda juga dapat menambahkan pelanggan baru di <a href="manage_customers.php">Manajemen Pelanggan</a>.</small>
                     </div>
-
                     <div id="new_customer_fields" class="mb-3">
                         <h5>Detail Pelanggan Baru</h5>
                         <div class="row">
@@ -255,7 +237,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label for="service_id" class="form-label">Pilih Layanan:</label>
                         <select class="form-select <?php echo (!empty($service_error)) ? 'is-invalid' : ''; ?>" id="service_id" name="service_id" required>
@@ -272,7 +253,6 @@
                         </div>
                         <small class="form-text text-muted">Jika layanan belum terdaftar, tambahkan di <a href="manage_services.php">Manajemen Layanan</a>.</small>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="booking_date" class="form-label">Tanggal Booking:</label>
@@ -285,14 +265,12 @@
                                 value="<?php echo isset($_POST['booking_time']) ? htmlspecialchars($_POST['booking_time']) : date('H:i'); ?>">
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah Pemesanan</button>
                     <a href="admin_dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
                 </form>
             </main>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleCustomerFields() {
@@ -300,7 +278,6 @@
             const newCustomerRadio = document.getElementById('newCustomer');
             const existingCustomerFields = document.getElementById('existing_customer_fields');
             const newCustomerFields = document.getElementById('new_customer_fields');
-
             if (existingCustomerRadio.checked) {
                 existingCustomerFields.style.display = 'block';
                 newCustomerFields.style.display = 'none';
@@ -323,10 +300,8 @@
 
             }
         }
-
         // Panggil fungsi saat halaman dimuat untuk mengatur tampilan awal
         document.addEventListener('DOMContentLoaded', toggleCustomerFields);
-
         // Jika ada error validasi saat POST, pastikan field yang relevan tetap terlihat
         <?php if (!empty($new_customer_name_error) || !empty($new_customer_email_error) || !empty($new_customer_phone_error)): ?>
             document.getElementById('newCustomer').checked = true;
@@ -338,7 +313,6 @@
     </script>
 </body>
 </html>
-
 <?php
 // Koneksi ke database ditutup di akhir script
 if (isset($conn) && $conn instanceof mysqli) {

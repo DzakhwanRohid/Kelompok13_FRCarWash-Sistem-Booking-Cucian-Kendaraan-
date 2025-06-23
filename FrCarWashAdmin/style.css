@@ -248,76 +248,59 @@ body {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
-
-/* Sembunyikan card-header lama karena kita pakai struktur baru */
 .card-header {
     display: none;
 }
-
-/* Gaya untuk angka besar di dalam card-body */
 .card-value {
-    font-size: 2.5rem; /* Ukuran font lebih besar untuk angka utama */
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #343a40; /* Warna gelap untuk angka */
-    margin-bottom: 5px; /* Jarak antara angka dan label */
+    color: #343a40;
+    margin-bottom: 5px;
 }
-
-/* Gaya untuk label di bawah angka */
 .card-label {
     font-size: 0.95rem;
-    color: #6c757d; /* Warna teks yang lebih muted untuk label */
+    color: #6c757d;
     margin-bottom: 0;
 }
-
-/* Gaya untuk ikon utama di pojok kanan atas card-body */
 .card-main-icon {
-    font-size: 2.8rem; /* Ikon besar */
-    color: rgba(0, 0, 0, 0.1); /* Warna ikon lebih samar */
-    align-self: flex-start; /* Posisikan ikon di bagian atas */
+    font-size: 2.8rem;
+    color: rgba(0, 0, 0, 0.1);
+    align-self: flex-start;
 }
-
-/* Gaya untuk bilah bawah berwarna (card-footer baru) */
 .card-footer.card-bottom-bar {
     padding: 10px 20px;
-    border-top: 1px solid rgba(0,0,0,0.05); /* Sedikit garis pemisah */
+    border-top: 1px solid rgba(0,0,0,0.05);
     font-size: 0.85em;
     display: flex;
-    justify-content: space-between; /* Untuk meratakan teks dan ikon panah */
+    justify-content: space-between;
     align-items: center;
-    border-bottom-left-radius: 10px; /* Ikuti radius card */
-    border-bottom-right-radius: 10px; /* Ikuti radius card */
-    color: #fff; /* Default teks putih */
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    color: #fff;
 }
-
-/* Sesuaikan warna teks untuk bilah bawah jika latar belakangnya terang (misal warning) */
 .card-footer.card-bottom-bar.bg-warning {
-    color: #333 !important; /* Teks gelap untuk latar kuning */
+    color: #333 !important;
 }
-
-/* Responsive adjustments for sidebar toggle */
 @media (max-width: 768px) {
     .sidebar-wrapper {
-        left: -260px; /* Hide sidebar off-screen */
+        left: -260px;
     }
     .sidebar-wrapper.show {
-        left: 0; /* Show sidebar */
+        left: 0; 
     }
     .content {
         margin-left: 0;
     }
     .navbar-toggler {
         display: block !important;
-        margin-right: 15px; /* Space between toggler and brand */
+        margin-right: 15px; 
     }
-    /* .navbar-brand {
-        margin-left: 0;
-    } */
 }
 @media (min-width: 769px) {
     .sidebar-wrapper {
-        left: 0 !important; /* Ensure sidebar is visible on desktop */
+        left: 0 !important; 
     }
     .navbar-toggler {
-        display: none !important; /* Hide hamburger on desktop */
+        display: none !important; 
     }
 }
